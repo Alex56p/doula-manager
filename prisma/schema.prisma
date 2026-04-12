@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  mothers   Mother[]
+  meetingTypes MeetingType[]
+  guardWeeksBefore Int @default(3)
+  guardWeeksAfter  Int @default(2)
+  createdAt DateTime @default(now())
+}
+
+model Mother {
+  id              String           @id @default(cuid())
+  name            String
+  age             Int?
+  childrenCount   Int              @default(0)
+  contactInfo     String
+  dueDate         DateTime?
+  status          MotherStatus     @default(POTENTIAL)
+  guardPeriodStart DateTime?
+  guardPeriodEnd   DateTime?
+  birthDate       DateTime?
+  birthDuration   String?
+  partnerName     String?
+  partnerContact  String?
+  notes           String?
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  events          Event[]
+  payments        Payment[]
+  packages        MotherPackage[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model PackageTemplate {
+  id                String  @id @default(cuid())
+  name              String
+  prenatalCount     Int     @default(0)
+  postnatalCount    Int     @default(0)
+  guardHours        Int     @default(0)
+  relevailleCount   Int     @default(0)
+  price             Float   @default(0.0)
+}
+
+model MotherPackage {
+  id                String  @id @default(cuid())
+  motherId          String
+  mother            Mother  @relation(fields: [motherId], references: [id])
+  name              String
+  prenatalCount     Int     @default(0)
+  postnatalCount    Int     @default(0)
+  guardHours        Int     @default(0)
+  relevailleCount   Int     @default(0)
+  price             Float   @default(0.0)
+  createdAt         DateTime @default(now())
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  type        EventType? // Keep for legacy / simple cases
+  meetingTypeId String?
+  meetingType   MeetingType? @relation(fields: [meetingTypeId], references: [id])
+  date        DateTime
+  status      EventStatus @default(SCHEDULED)
+  notes       String?
+  motherId    String
+  mother      Mother    @relation(fields: [motherId], references: [id])
+}
+
+model MeetingType {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  events    Event[]
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  amount      Float
+  invoiceNo   String?
+  dueDate     DateTime
+  status      PaymentStatus @default(PENDING)
+  motherId    String
+  mother      Mother        @relation(fields: [motherId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum MotherStatus {
+  UNCONFIRMED
+  CONFIRMED
+  POTENTIAL
+  IN_GUARD
+  POST_NATAL
+  COMPLETED
+}
+
+enum EventType {
+  PRE_NATAL
+  POST_NATAL
+  RELEVAILLE
+  GUARD
+  MEETING
+  ACCOUCHEMENT
+}
+
+enum EventStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
