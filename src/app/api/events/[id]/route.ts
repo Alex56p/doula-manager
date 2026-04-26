@@ -42,6 +42,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (data.notes !== undefined) updateData.notes = data.notes;
   if (data.date !== undefined) updateData.date = new Date(data.date);
   if (data.title !== undefined) updateData.title = data.title;
+  if (data.duration !== undefined) updateData.duration = parseFloat(data.duration) || 1;
+  if (data.meetingTypeId !== undefined) updateData.meetingTypeId = data.meetingTypeId;
 
   try {
     const updated = await prisma.event.update({
@@ -51,5 +53,19 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json({ error: "Error updating event" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
+
+  try {
+    await prisma.event.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Error deleting event" }, { status: 500 });
   }
 }

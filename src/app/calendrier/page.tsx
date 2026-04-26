@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function CalendrierPage() {
-  const [data, setData] = useState<{events: any[], mothers: any[]}>({events: [], mothers: []});
+  const [data, setData] = useState<{events: any[], mothers: any[], payments: any[]}>({events: [], mothers: [], payments: []});
   const [meetingTypes, setMeetingTypes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -200,6 +200,18 @@ export default function CalendrierPage() {
                     {week.map((day, dIdx) => {
                       if (!day) return <div key={dIdx} />;
                       const dayEvents = data.events.filter(e => isSameDay(e.date, day, month, year, false));
+                      
+                      const dayPayments = data.payments.filter(p => {
+                        if (p.status === 'PAID') {
+                          // If paid, show on paidAt if set, otherwise on dueDate
+                          const dateToShow = p.paidAt || p.dueDate;
+                          return isSameDay(dateToShow, day, month, year, false);
+                        } else {
+                          // Otherwise show on dueDate
+                          return isSameDay(p.dueDate, day, month, year, false);
+                        }
+                      });
+
                       const dpaMothers = data.mothers.filter(m => m.dueDate && isSameDay(m.dueDate, day, month, year, true));
                       const birthMothers = data.mothers.filter(m => m.birthDate && isSameDay(m.birthDate, day, month, year, true));
 
@@ -223,6 +235,31 @@ export default function CalendrierPage() {
                               </div>
                             </Link>
                           ))}
+                          
+                          {dayPayments.map(p => {
+                            const isPaid = p.status === 'PAID';
+                            const mColor = getMamanColor(p.motherId);
+                            return (
+                              <Link key={`pay-${p.id}`} href={`/mamans/${p.motherId}`}>
+                                <div style={{ 
+                                  fontSize: "0.75rem", 
+                                  padding: "4px 8px", 
+                                  borderRadius: "4px", 
+                                  border: isPaid ? `1px solid ${mColor}` : `1px dashed ${mColor}`, 
+                                  color: isPaid ? "white" : mColor,
+                                  background: isPaid ? mColor : "rgba(255,255,255,0.8)",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  cursor: "pointer",
+                                  boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                                  opacity: isPaid ? 0.7 : 1
+                                }}>
+                                  {isPaid ? "✅" : "💰"} {p.amount}$ - {p.mother.name}
+                                </div>
+                              </Link>
+                            );
+                          })}
                           
                           {dpaMothers.map(m => (
                             <Link key={`dpa-${m.id}`} href={`/mamans/${m.id}`}>

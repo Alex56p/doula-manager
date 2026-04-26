@@ -35,10 +35,10 @@ export default function ParametresPage() {
   const fetchData = async () => {
     setLoading(true);
     if (isAdmin) {
-      const resUsers = await fetch("/api/users");
+      const resUsers = await fetch(`/api/users?t=${Date.now()}`, { cache: "no-store" });
       if (resUsers.ok) setUsers(await resUsers.json());
     }
-    const resTypes = await fetch("/api/meeting-types");
+    const resTypes = await fetch(`/api/meeting-types?t=${Date.now()}`, { cache: "no-store" });
     if (resTypes.ok) setMeetingTypes(await resTypes.json());
     setLoading(false);
   };
@@ -79,10 +79,16 @@ export default function ParametresPage() {
     }
   };
 
-  const deleteType = async (id: string) => {
+  const deleteType = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const id = (e.currentTarget as HTMLButtonElement).dataset.id!;
     if (!confirm("Supprimer ce type de rencontre ?")) return;
     const res = await fetch(`/api/meeting-types/${id}`, { method: "DELETE" });
-    if (res.ok) fetchData();
+    if (res.ok) {
+      fetchData();
+    } else {
+      const data = await res.json();
+      alert("Erreur lors de la suppression : " + (data.error || "Erreur inconnue"));
+    }
   };
 
   const handleUserSubmit = async (e: React.FormEvent) => {
@@ -162,7 +168,7 @@ export default function ParametresPage() {
                   </div>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button onClick={() => { setEditTypeId(t.id); setTypeName(t.name); setTypeColor(t.color || "#f472b6"); }} style={{ padding: '4px 8px', fontSize: '0.75rem', background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer' }}>Modifier</button>
-                    <button onClick={() => deleteType(t.id)} style={{ padding: '4px 8px', fontSize: '0.75rem', background: 'transparent', border: 'none', color: '#ff4d4f', cursor: 'pointer' }}>Supprimer</button>
+                    <button data-id={t.id} onClick={deleteType} style={{ padding: '4px 8px', fontSize: '0.75rem', background: 'transparent', border: 'none', color: '#ff4d4f', cursor: 'pointer' }}>Supprimer</button>
                   </div>
                 </li>
               ))}

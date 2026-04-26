@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-  const adminPassword = await bcrypt.hash('doula123!', 10);
+  const password = process.env.ADMIN_PASSWORD || 'doula123!';
+  const adminPassword = await bcrypt.hash(password, 10);
   
   const admin = await prisma.user.upsert({
     where: { email: 'admin@doulamanager.com' },

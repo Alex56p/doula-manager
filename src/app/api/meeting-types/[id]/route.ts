@@ -11,9 +11,16 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
   const { id } = await params;
   try {
+    // First, unlink any events that use this meeting type (set meetingTypeId to null)
+    await prisma.event.updateMany({
+      where: { meetingTypeId: id },
+      data: { meetingTypeId: null }
+    });
+    // Then delete the meeting type
     await prisma.meetingType.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error("Error deleting meeting type:", error);
     return NextResponse.json({ error: "Erreur lors de la suppression" }, { status: 500 });
   }
 }

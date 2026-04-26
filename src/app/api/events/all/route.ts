@@ -16,30 +16,27 @@ export async function GET() {
   const events = await prisma.event.findMany({
     where: role === 'ADMIN' ? {} : { mother: { userId } },
     include: {
-      mother: {
-        select: {
-          id: true,
-          name: true,
-          status: true,
-        }
-      }
+      mother: { select: { id: true, name: true, status: true } }
     },
     orderBy: { date: 'asc' }
+  });
+
+  // Fetch all payments (to show pending/overdue in calendar)
+  const payments = await prisma.payment.findMany({
+    where: role === 'ADMIN' ? {} : { mother: { userId } },
+    include: {
+      mother: { select: { id: true, name: true } }
+    },
+    orderBy: { dueDate: 'asc' }
   });
 
   // Fetch all mothers to get their guard periods
   const mothers = await prisma.mother.findMany({
     where: role === 'ADMIN' ? {} : { userId },
     select: {
-      id: true,
-      name: true,
-      dueDate: true,
-      birthDate: true,
-      guardPeriodStart: true,
-      guardPeriodEnd: true,
-      status: true
+      id: true, name: true, dueDate: true, birthDate: true, guardPeriodStart: true, guardPeriodEnd: true, status: true
     }
   });
 
-  return NextResponse.json({ events, mothers });
+  return NextResponse.json({ events, mothers, payments });
 }

@@ -10,9 +10,10 @@ export async function POST(req: Request) {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const data = await req.json();
-  const { title, type, date, motherId, notes } = data;
+  const { title, date, motherId, notes, duration, meetingTypeId, type } = data;
 
-  if (!title || !type || !date || !motherId) {
+  if (!title || !date || !motherId) {
+    console.log("Missing fields:", { title, date, motherId });
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -22,9 +23,10 @@ export async function POST(req: Request) {
   const event = await prisma.event.create({
     data: {
       title,
-      type: data.type || null,
-      meetingTypeId: data.meetingTypeId || null,
+      type: type || null,
+      meetingTypeId: meetingTypeId || null,
       date: new Date(date),
+      duration: parseFloat(duration) || 1,
       notes: notes || "",
       motherId,
     }

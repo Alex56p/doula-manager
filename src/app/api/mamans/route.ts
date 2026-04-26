@@ -64,13 +64,17 @@ export async function POST(req: Request) {
 
   const dueDate = data.dueDate && data.dueDate.trim() !== "" ? new Date(data.dueDate) : null;
   
-  if (dueDate && !isNaN(dueDate.getTime())) {
+  let guardStart: Date | null = null;
+  let guardEnd: Date | null = null;
+
+  if (dueDate) {
     const start = new Date(dueDate);
     start.setDate(start.getDate() - (weeksBefore * 7));
+    
     const end = new Date(dueDate);
     end.setDate(end.getDate() + (weeksAfter * 7));
-    guardPeriodStart = start;
-    guardPeriodEnd = end;
+    guardStart = start;
+    guardEnd = end;
   }
 
   const newMaman = await prisma.mother.create({
@@ -81,8 +85,8 @@ export async function POST(req: Request) {
       childrenCount: data.childrenCount ? parseInt(data.childrenCount) : 0,
       status: data.status || 'POTENTIAL',
       dueDate: dueDate,
-      guardPeriodStart: guardPeriodStart,
-      guardPeriodEnd: guardPeriodEnd,
+      guardPeriodStart: guardStart,
+      guardPeriodEnd: guardEnd,
       notes: data.notes || '',
       userId: userId,
     }

@@ -23,9 +23,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       name: template.name,
       prenatalCount: template.prenatalCount,
       postnatalCount: template.postnatalCount,
-      guardHours: template.guardHours,
+      guardDays: template.guardDays,
       relevailleCount: template.relevailleCount,
       price: template.price,
+      meetingCounts: template.meetingCounts !== null ? template.meetingCounts : undefined,
     }
   });
 

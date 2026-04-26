@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SmartDateInput } from "@/components/SmartDateInput";
 
 export default function MamansPage() {
   const [mamans, setMamans] = useState<any[]>([]);
@@ -83,8 +84,11 @@ export default function MamansPage() {
               <input type="text" required value={contactInfo} onChange={e => setContactInfo(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--glass-border)" }} />
             </div>
             <div>
-              <label style={{ display: "block", marginBottom: "4px" }}>Date d'accouchement prévue</label>
-              <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--glass-border)" }} />
+              <SmartDateInput
+                label="Date d'accouchement prévue"
+                value={dueDate}
+                onChange={setDueDate}
+              />
             </div>
             <div>
               <label style={{ display: "block", marginBottom: "4px" }}>Statut</label>

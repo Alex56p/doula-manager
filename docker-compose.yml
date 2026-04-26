@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: doula-db
+    environment:
+      POSTGRES_USER: doula
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: doula_manager
+    ports:
+      - "5433:5432"
+    volumes:
+      - doula-db-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: doula-app
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+    depends_on:
+      - db
+
+volumes:
+  doula-db-data:
