@@ -16,8 +16,15 @@ services:
   app:
     build: .
     container_name: doula-app
+    command: npm run dev
     ports:
       - "3000:3000"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./prisma:/app/prisma
+      - ./next.config.ts:/app/next.config.ts
+      - ./package.json:/app/package.json
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}

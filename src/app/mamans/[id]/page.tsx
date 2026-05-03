@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { SmartDateInput } from "@/components/SmartDateInput";
-import { SmartDateTimeInput } from "@/components/SmartDateTimeInput";
+import { SmartDateInput } from "../../../components/SmartDateInput";
+import { SmartDateTimeInput } from "../../../components/SmartDateTimeInput";
 
 export default function MamanDetailsPage() {
   const params = useParams();
@@ -362,10 +362,10 @@ export default function MamanDetailsPage() {
                   <input type="text" value={editData.contactInfo} onChange={e => setEditData({...editData, contactInfo: e.target.value})} required style={{ width: "100%", padding: "6px", borderRadius: "6px" }} />
                 </div>
                 <div>
-                  <SmartDateInput label="DPA (Date Prévue)" value={editData.dueDate} onChange={v => setEditData({...editData, dueDate: v})} />
+import { SmartDateInput } from "@/components/SmartDateInput";
                 </div>
                 <div>
-                  <SmartDateInput label="Date de naissance (réelle)" value={editData.birthDate} onChange={v => setEditData({...editData, birthDate: v})} />
+import { SmartDateInput } from "@/components/SmartDateInput";
                 </div>
                 <div>
                   <label style={{ fontSize: "0.85rem", display: "block" }}>Durée de l'accouchement</label>
@@ -419,20 +419,56 @@ export default function MamanDetailsPage() {
                      }
                    }} style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px', background: 'white', borderRadius: '12px' }}>
                      <input type="text" value={editPackageData.name} onChange={e => setEditPackageData({...editPackageData, name: e.target.value})} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                        <div><label style={{fontSize: '0.7rem'}}>Pré-natales</label><input type="number" value={editPackageData.prenatalCount} onChange={e => setEditPackageData({...editPackageData, prenatalCount: e.target.value})} style={{width: '100%', padding: '4px'}} /></div>
-                        <div><label style={{fontSize: '0.7rem'}}>Post-natales</label><input type="number" value={editPackageData.postnatalCount} onChange={e => setEditPackageData({...editPackageData, postnatalCount: e.target.value})} style={{width: '100%', padding: '4px'}} /></div>
-                        <div><label style={{fontSize: '0.7rem'}}>Relevaille</label><input type="number" value={editPackageData.relevailleCount} onChange={e => setEditPackageData({...editPackageData, relevailleCount: e.target.value})} style={{width: '100%', padding: '4px'}} /></div>
-                        <div><label style={{fontSize: '0.7rem'}}>Garde (jours)</label><input type="number" value={editPackageData.guardDays} onChange={e => setEditPackageData({...editPackageData, guardDays: e.target.value})} style={{width: '100%', padding: '4px'}} /></div>
-                     </div>
-                     <input type="number" step="0.01" value={editPackageData.price} onChange={e => setEditPackageData({...editPackageData, price: e.target.value})} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '8px' }}>
+                        <h4 style={{ gridColumn: '1 / -1', margin: '0', fontSize: '0.8rem', color: 'var(--primary)' }}>Quotas de Rencontres</h4>
+                        {meetingTypes.map(mt => (
+                          <div key={mt.id}>
+                            <label style={{ fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: mt.color || '#ccc' }}></div>
+                              {mt.name}
+                            </label>
+                            <input 
+                              type="number" 
+                              min="0"
+                              value={editPackageData.meetingCounts?.[mt.id] || ""} 
+                              placeholder="0"
+                              onChange={e => {
+                                const val = parseInt(e.target.value);
+                                setEditPackageData({
+                                  ...editPackageData,
+                                  meetingCounts: {
+                                    ...editPackageData.meetingCounts,
+                                    [mt.id]: isNaN(val) || val <= 0 ? undefined : val
+                                  }
+                                });
+                              }} 
+                              style={{ width: '100%', padding: '4px', borderRadius: '4px', border: '1px solid #cbd5e1' }} 
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                         <div><label style={{fontSize: '0.7rem', color: 'var(--text-muted)'}}>Garde (jours - ancien)</label><input type="number" value={editPackageData.guardDays} onChange={e => setEditPackageData({...editPackageData, guardDays: e.target.value})} style={{width: '100%', padding: '4px', borderRadius: '4px', border: '1px solid #cbd5e1'}} /></div>
+                         <div><label style={{fontSize: '0.7rem', color: 'var(--text-muted)'}}>Prix Total ($)</label><input type="number" step="0.01" value={editPackageData.price} onChange={e => setEditPackageData({...editPackageData, price: e.target.value})} style={{width: '100%', padding: '6px', borderRadius: '4px', border: '1px solid #cbd5e1' }} /></div>
+                      </div>
                      <div style={{ display: 'flex', gap: '8px' }}>
                         <button type="submit" className="btn-primary" style={{ flex: 1, padding: '4px' }}>Sauvegarder</button>
                         <button type="button" onClick={() => setEditingPackageId(null)} className="btn-secondary" style={{ flex: 1, padding: '4px' }}>Annuler</button>
                      </div>
                    </form>
                  ) : (
-                   <div className="package-card-mini" onClick={() => { setEditingPackageId(p.id); setEditPackageData({ name: p.name, prenatalCount: p.prenatalCount, postnatalCount: p.postnatalCount, guardDays: p.guardDays, relevailleCount: p.relevailleCount, price: p.price }); }} style={{ padding: "12px", background: "rgba(255,255,255,0.4)", borderRadius: "8px", border: "1px solid var(--glass-border)", marginBottom: "8px", cursor: 'pointer' }}>
+                   <div className="package-card-mini" onClick={() => { 
+                     setEditingPackageId(p.id); 
+                     setEditPackageData({ 
+                       name: p.name, 
+                       prenatalCount: p.prenatalCount, 
+                       postnatalCount: p.postnatalCount, 
+                       guardDays: p.guardDays, 
+                       relevailleCount: p.relevailleCount, 
+                       price: p.price,
+                       meetingCounts: p.meetingCounts || {}
+                     }); 
+                   }} style={{ padding: "12px", background: "rgba(255,255,255,0.4)", borderRadius: "8px", border: "1px solid var(--glass-border)", marginBottom: "8px", cursor: 'pointer' }}>
                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <p style={{ fontWeight: 600, margin: 0 }}>{p.name}{p.isCustom ? ' (Custom)' : ''}</p>
                         <span style={{ fontSize: '0.8rem', color: 'var(--primary)' }}>Modifier ✎</span>
@@ -488,7 +524,7 @@ export default function MamanDetailsPage() {
                         <input type="number" step="0.01" value={editPaymentData.amount} onChange={e => setEditPaymentData({...editPaymentData, amount: e.target.value})} style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #ccc' }} />
                       </div>
                       <div>
-                        <SmartDateInput label="Date Échéance" value={editPaymentData.dueDate} onChange={v => setEditPaymentData({...editPaymentData, dueDate: v})} />
+import { SmartDateInput } from "@/components/SmartDateInput";
                       </div>
                       <div>
                         <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Statut</label>
@@ -512,7 +548,7 @@ export default function MamanDetailsPage() {
                         </select>
                       </div>
                       <div>
-                        <SmartDateInput label="Paiement Réel" value={editPaymentData.paidAt} onChange={v => setEditPaymentData({...editPaymentData, paidAt: v})} />
+import { SmartDateInput } from "@/components/SmartDateInput";
                       </div>
                     </div>
                     <div>
@@ -562,7 +598,7 @@ export default function MamanDetailsPage() {
               <form onSubmit={handleAddPayment} style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "10px", padding: '12px', background: 'rgba(255,255,255,0.4)', borderRadius: '12px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <input type="number" step="0.01" required placeholder="Montant ($)" value={newPaymentAmount} onChange={e => setNewPaymentAmount(e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid var(--glass-border)" }} />
-                  <SmartDateInput value={newPaymentDate} onChange={setNewPaymentDate} />
+import { SmartDateInput } from "@/components/SmartDateInput";
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <select value={newPaymentType} onChange={e => setNewPaymentType(e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid var(--glass-border)", background: "white" }}>
@@ -591,7 +627,7 @@ export default function MamanDetailsPage() {
                    <input type="text" placeholder="Ex: Chèque, Virement..." value={newPaymentNotes} onChange={e => setNewPaymentNotes(e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid var(--glass-border)" }} />
                 </div>
                 <div>
-                   <SmartDateInput label="Date paiement réel (si payé)" value={newPaymentPaidAt} onChange={setNewPaymentPaidAt} />
+import { SmartDateInput } from "@/components/SmartDateInput";
                 </div>
                 <button type="submit" className="btn-primary" style={{ width: "100%" }}>Enregistrer</button>
               </form>
@@ -650,10 +686,38 @@ export default function MamanDetailsPage() {
                   };
 
                   return (
-                    <div key={pkg.id} style={{ background: 'rgba(255,255,255,0.3)', padding: '12px', borderRadius: '12px' }}>
-                      <p style={{ fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '12px' }}>{pkg.name}</p>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-
+                    <div key={pkg.id} className="glass-panel" style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid var(--glass-border)', padding: '16px', borderRadius: '16px', marginBottom: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: 0, color: 'var(--primary)' }}>{pkg.name}</p>
+                        <span style={{ fontSize: '0.8rem', background: 'rgba(var(--primary-rgb), 0.1)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px' }}>{pkg.price}$</span>
+                      </div>
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
+                        
+                        {/* Legacy Categories (if any count > 0) */}
+                        {categories.filter(cat => (pkg[cat.key] || 0) > 0).map(cat => {
+                          const total = pkg[cat.key];
+                          const { completed, scheduled } = getStats(cat);
+                          const remaining = Math.max(0, total - (completed + scheduled));
+                          
+                          return (
+                            <div key={cat.key} style={{ fontSize: '0.85rem' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <span style={{ fontWeight: 500 }}>{cat.label}</span>
+                                <span style={{ color: 'var(--text-muted)' }}>{completed + scheduled} / {total}</span>
+                              </div>
+                              <div style={{ width: '100%', height: '10px', background: 'rgba(0,0,0,0.05)', borderRadius: '5px', overflow: 'hidden', display: 'flex' }}>
+                                <div style={{ height: '100%', width: `${(completed / total) * 100}%`, background: 'var(--success)' }} title="Complété"></div>
+                                <div style={{ height: '100%', width: `${(scheduled / total) * 100}%`, background: 'var(--primary)', opacity: 0.5 }} title="Planifié"></div>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginTop: '6px', color: 'var(--text-muted)' }}>
+                                <span>✅ {completed}</span>
+                                <span>🕒 {scheduled}</span>
+                                <span>🆓 {remaining}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
 
                         {/* Custom Meeting Types Progression */}
                         {Object.entries(pkg.meetingCounts || {}).map(([mtId, val]) => {
@@ -669,38 +733,39 @@ export default function MamanDetailsPage() {
                           const color = mt.color || "var(--primary)";
 
                           return (
-                            <div key={mtId} style={{ fontSize: '0.8rem' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                  <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: color}}></div>
+                            <div key={mtId} style={{ fontSize: '0.85rem' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <span style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 500 }}>
+                                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: color}}></div>
                                   {mt.name}
                                 </span>
-                                <span>{completed + scheduled} / {total}</span>
+                                <span style={{ color: 'var(--text-muted)' }}>{completed + scheduled} / {total}</span>
                               </div>
-                              <div style={{ width: '100%', height: '8px', background: '#eee', borderRadius: '4px', overflow: 'hidden', display: 'flex' }}>
+                              <div style={{ width: '100%', height: '10px', background: 'rgba(0,0,0,0.05)', borderRadius: '5px', overflow: 'hidden', display: 'flex' }}>
                                 <div style={{ height: '100%', width: `${(completed / total) * 100}%`, background: 'var(--success)' }} title="Complété"></div>
                                 <div style={{ height: '100%', width: `${(scheduled / total) * 100}%`, background: color, opacity: 0.6 }} title="Planifié"></div>
                               </div>
-                              <div style={{ display: 'flex', gap: '8px', fontSize: '0.7rem', marginTop: '4px', color: 'var(--text-muted)' }}>
-                                <span title="Nombre de rencontres terminées">✅ {completed} Complété</span>
-                                <span title="Nombre de rencontres planifiées">🕒 {scheduled} Planifié</span>
-                                <span title="Reste à planifier">🆓 {remaining} Reste</span>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginTop: '6px', color: 'var(--text-muted)' }}>
+                                <span>✅ {completed}</span>
+                                <span>🕒 {scheduled}</span>
+                                <span>🆓 {remaining}</span>
                               </div>
                             </div>
                           );
                         })}
+
                         {/* Garde special progression */}
                         {pkg.guardDays > 0 && (
-                          <div style={{ fontSize: '0.8rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                              <span>Garde (Progression)</span>
-                              <span>{getGardeProgression().percent}%</span>
+                          <div style={{ fontSize: '0.85rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                              <span style={{ fontWeight: 500 }}>Période de Garde</span>
+                              <span style={{ color: 'var(--text-muted)' }}>{getGardeProgression().percent}%</span>
                             </div>
-                            <div style={{ width: '100%', height: '8px', background: '#eee', borderRadius: '4px', overflow: 'hidden', display: 'flex' }}>
+                            <div style={{ width: '100%', height: '10px', background: 'rgba(0,0,0,0.05)', borderRadius: '5px', overflow: 'hidden', display: 'flex' }}>
                               <div style={{ height: '100%', width: `${getGardeProgression().percent}%`, background: '#22d3ee', transition: 'width 0.5s ease' }} title="Temps écoulé"></div>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px', fontSize: '0.7rem', marginTop: '4px', color: 'var(--text-muted)' }}>
-                              <span title="Statut actuel de la garde">⏳ {getGardeProgression().label}</span>
+                            <div style={{ display: 'flex', fontSize: '0.7rem', marginTop: '6px', color: 'var(--text-muted)' }}>
+                              <span>⏳ {getGardeProgression().label}</span>
                             </div>
                           </div>
                         )}
@@ -732,9 +797,7 @@ export default function MamanDetailsPage() {
                     {meetingTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                   </select>
                 </div>
-                <div>
-                  <SmartDateTimeInput label="Date" value={newEventDate} onChange={setNewEventDate} />
-                </div>
+                <SmartDateTimeInput />
                 {meetingTypes.find(t => t.id === newMeetingTypeId)?.name.toUpperCase().includes('GARDE') && (
                   <div>
                     <label style={{ display: "block", marginBottom: "4px" }}>Durée (jours)</label>
