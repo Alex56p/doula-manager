@@ -805,7 +805,7 @@ export default function MamanDetailsPage() {
                     {meetingTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                   </select>
                 </div>
-                <SmartDateTimeInput />
+                <SmartDateTimeInput value={newEventDate} onChange={setNewEventDate} />
                 {meetingTypes.find(t => t.id === newMeetingTypeId)?.name.toUpperCase().includes('GARDE') && (
                   <div>
                     <label style={{ display: "block", marginBottom: "4px" }}>Durée (jours)</label>

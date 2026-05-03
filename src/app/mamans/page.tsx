@@ -105,7 +105,7 @@ export default function MamansPage() {
                 transition: 'all 0.2s'
               }}
             >
-              {label} ({count})
+              {(label as any)} ({count})
             </button>
           );
         })}
