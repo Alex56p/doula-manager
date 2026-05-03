@@ -362,10 +362,12 @@ export default function MamanDetailsPage() {
                   <input type="text" value={editData.contactInfo} onChange={e => setEditData({...editData, contactInfo: e.target.value})} required style={{ width: "100%", padding: "6px", borderRadius: "6px" }} />
                 </div>
                 <div>
-import { SmartDateInput } from "@/components/SmartDateInput";
+                  <label style={{ fontSize: "0.85rem", display: "block" }}>Date prévue d'accouchement (DPA)</label>
+                  <SmartDateInput value={editData.dueDate} onChange={val => setEditData({...editData, dueDate: val})} />
                 </div>
                 <div>
-import { SmartDateInput } from "@/components/SmartDateInput";
+                  <label style={{ fontSize: "0.85rem", display: "block" }}>Date de naissance du bébé</label>
+                  <SmartDateInput value={editData.birthDate} onChange={val => setEditData({...editData, birthDate: val})} />
                 </div>
                 <div>
                   <label style={{ fontSize: "0.85rem", display: "block" }}>Durée de l'accouchement</label>
@@ -523,8 +525,9 @@ import { SmartDateInput } from "@/components/SmartDateInput";
                         <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Montant ($)</label>
                         <input type="number" step="0.01" value={editPaymentData.amount} onChange={e => setEditPaymentData({...editPaymentData, amount: e.target.value})} style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #ccc' }} />
                       </div>
-                      <div>
-import { SmartDateInput } from "@/components/SmartDateInput";
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Échéance</label>
+                        <SmartDateInput value={editPaymentData.dueDate} onChange={val => setEditPaymentData({...editPaymentData, dueDate: val})} />
                       </div>
                       <div>
                         <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Statut</label>
@@ -547,8 +550,9 @@ import { SmartDateInput } from "@/components/SmartDateInput";
                           <option value="MEETING">Autre/Rencontre</option>
                         </select>
                       </div>
-                      <div>
-import { SmartDateInput } from "@/components/SmartDateInput";
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Payé le (optionnel)</label>
+                        <SmartDateInput value={editPaymentData.paidAt || ""} onChange={val => setEditPaymentData({...editPaymentData, paidAt: val})} />
                       </div>
                     </div>
                     <div>
@@ -598,7 +602,10 @@ import { SmartDateInput } from "@/components/SmartDateInput";
               <form onSubmit={handleAddPayment} style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "10px", padding: '12px', background: 'rgba(255,255,255,0.4)', borderRadius: '12px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <input type="number" step="0.01" required placeholder="Montant ($)" value={newPaymentAmount} onChange={e => setNewPaymentAmount(e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid var(--glass-border)" }} />
-import { SmartDateInput } from "@/components/SmartDateInput";
+                  <div>
+                    <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Date d'échéance</label>
+                    <SmartDateInput value={newPaymentDate} onChange={setNewPaymentDate} />
+                  </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <select value={newPaymentType} onChange={e => setNewPaymentType(e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid var(--glass-border)", background: "white" }}>
@@ -627,7 +634,8 @@ import { SmartDateInput } from "@/components/SmartDateInput";
                    <input type="text" placeholder="Ex: Chèque, Virement..." value={newPaymentNotes} onChange={e => setNewPaymentNotes(e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid var(--glass-border)" }} />
                 </div>
                 <div>
-import { SmartDateInput } from "@/components/SmartDateInput";
+                  <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Payé le (si déjà payé)</label>
+                  <SmartDateInput value={newPaymentPaidAt} onChange={setNewPaymentPaidAt} />
                 </div>
                 <button type="submit" className="btn-primary" style={{ width: "100%" }}>Enregistrer</button>
               </form>
